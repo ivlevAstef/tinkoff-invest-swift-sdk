@@ -17,14 +17,14 @@ public final class TIPortfolio {
     }
 
     public func fetch(accountId: BrokerAccountId) -> AnyPublisher<Portfolio, Error> {
-        return rest.get(path: "/portfolio", query: [("brokerAccountId", accountId)])
+        return rest.get(path: "/portfolio", query: accountId.query)
             .map { (response: Response<Portfolio>) -> Portfolio in
                 return response.payload
             }.eraseToAnyPublisher()
     }
 
     public func currencies(accountId: BrokerAccountId) -> AnyPublisher<CurrencyPositions, Error> {
-        return rest.get(path: "/portfolio/currencies", query: [("brokerAccountId", accountId)])
+        return rest.get(path: "/portfolio/currencies", query: accountId.query)
             .map { (response: Response<CurrencyPositions>) -> CurrencyPositions in
                 return response.payload
             }.eraseToAnyPublisher()

@@ -27,7 +27,7 @@ public final class TISandbox {
 
     private struct RegisterPayload: Codable {
         let brokerAccountType: String
-        let brokerAccountId: BrokerAccountId
+        let brokerAccountId: String
     }
 
     private let rest: TIRest
@@ -39,33 +39,33 @@ public final class TISandbox {
     public func register(accountType: AccountType) -> AnyPublisher<BrokerAccountId, Error> {
         return rest.post(path: "/register", body: RegisterRequest(type: accountType))
             .map { (response: Response<RegisterPayload>) -> BrokerAccountId in
-                return response.payload.brokerAccountId
+                return .id(response.payload.brokerAccountId)
             }.eraseToAnyPublisher()
     }
 
     public func remove(accountId: BrokerAccountId) -> AnyPublisher<Empty, Error> {
-        return rest.post(path: "/remove", body: nil as Optional<Empty>, query: [("brokerAccountId", accountId)])
+        return rest.post(path: "/remove", body: nil as Optional<Empty>, query: accountId.query)
             .map { (response: Response<Empty>) -> Empty in
                 return response.payload
             }.eraseToAnyPublisher()
     }
 
     public func clearPositions(accountId: BrokerAccountId) -> AnyPublisher<Empty, Error> {
-        return rest.post(path: "/clear", body: nil as Optional<Empty>, query: [("brokerAccountId", accountId)])
+        return rest.post(path: "/clear", body: nil as Optional<Empty>, query: accountId.query)
             .map { (response: Response<Empty>) -> Empty in
                 return response.payload
             }.eraseToAnyPublisher()
     }
 
     public func setBalance(accountId: BrokerAccountId, money: SandboxSetCurrencyBalanceRequest) -> AnyPublisher<Empty, Error> {
-        return rest.post(path: "/currencies/balance", body: money, query: [("brokerAccountId", accountId)])
+        return rest.post(path: "/currencies/balance", body: money, query: accountId.query)
             .map { (response: Response<Empty>) -> Empty in
                 return response.payload
             }.eraseToAnyPublisher()
     }
 
     public func setPosition(accountId: BrokerAccountId, position: SandboxSetPositionBalanceRequest) -> AnyPublisher<Empty, Error> {
-        return rest.post(path: "/sandbox/positions/balance", body: position, query: [("brokerAccountId", accountId)])
+        return rest.post(path: "/sandbox/positions/balance", body: position, query: accountId.query)
             .map { (response: Response<Empty>) -> Empty in
                 return response.payload
             }.eraseToAnyPublisher()

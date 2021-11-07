@@ -7,6 +7,18 @@
 import Foundation
 import Combine
 
+typealias QueryItem = (name: String, value: String?)
+typealias Query = [QueryItem]
+
+extension BrokerAccountId {
+    var query: Query {
+        switch self {
+        case .tinkoff: return []
+        case .id(let accountId): return [("brokerAccountId", accountId)]
+        }
+    }
+}
+
 /// Класс позволяет отправлять запросы на сервер.
 public class TIRest {
     public enum Server {
@@ -25,9 +37,9 @@ public class TIRest {
         self.urlSession = URLSession.shared
     }
 
-    public func post<Body: Codable, Result: Codable>(path: String,
+    func post<Body: Codable, Result: Codable>(path: String,
                                                      body: Body?,
-                                                     query: [(name: String, value: String?)] = []) -> AnyPublisher<Result, Error> {
+                                                     query: Query = []) -> AnyPublisher<Result, Error> {
         do {
             let bodyData = try body.flatMap { try JSONEncoder().encode($0) }
             return request(method: "POST", path: path, body: bodyData, query: query)
@@ -38,16 +50,16 @@ public class TIRest {
         }
     }
 
-    public func get<Result: Codable>(path: String, query: [(name: String, value: String?)] = []) -> AnyPublisher<Result, Error> {
+    func get<Result: Codable>(path: String, query: Query = []) -> AnyPublisher<Result, Error> {
         return request(method: "GET", path: path, query: query)
             .decode(type: Result.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
     }
 
-    public func request(method: String,
+    func request(method: String,
                         path: String,
                         body: Data? = nil,
-                        query: [(name: String, value: String?)] = []) -> AnyPublisher<Data, Error> {
+                        query: Query = []) -> AnyPublisher<Data, Error> {
         let url = server.url.appendingPathComponent(path)
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
             fatalError()
