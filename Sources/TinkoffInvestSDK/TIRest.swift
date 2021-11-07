@@ -57,14 +57,16 @@ public class TIRest {
     }
 
     func request(method: String,
-                        path: String,
-                        body: Data? = nil,
-                        query: Query = []) -> AnyPublisher<Data, Error> {
+                 path: String,
+                 body: Data? = nil,
+                 query: Query = []) -> AnyPublisher<Data, Error> {
         let url = server.url.appendingPathComponent(path)
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
             fatalError()
         }
-        urlComponents.queryItems = query.map { URLQueryItem(name: $0.name, value: $0.value) }
+        if !query.isEmpty {
+            urlComponents.queryItems = query.map { URLQueryItem(name: $0.name, value: $0.value) }
+        }
         guard var urlRequest = urlComponents.url.flatMap({ URLRequest(url: $0) }) else {
             fatalError()
         }
