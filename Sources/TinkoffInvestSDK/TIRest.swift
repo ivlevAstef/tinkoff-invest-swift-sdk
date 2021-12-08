@@ -65,9 +65,12 @@ public class TIRest {
             fatalError()
         }
         if !query.isEmpty {
+            func escape(_ str: String) -> String {
+                str.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? str
+            }
+
             urlComponents.queryItems = query.map {
-                URLQueryItem(name: $0.name.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? $0.name,
-                             value: $0.value?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? $0.value)
+                URLQueryItem(name: escape($0.name), value: $0.value.flatMap { escape($0) })
             }
         }
         guard var urlRequest = urlComponents.url.flatMap({ URLRequest(url: $0) }) else {
