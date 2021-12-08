@@ -65,7 +65,10 @@ public class TIRest {
             fatalError()
         }
         if !query.isEmpty {
-            urlComponents.queryItems = query.map { URLQueryItem(name: $0.name, value: $0.value) }
+            urlComponents.queryItems = query.map {
+                URLQueryItem(name: $0.name.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? $0.name,
+                             value: $0.value?.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? $0.value)
+            }
         }
         guard var urlRequest = urlComponents.url.flatMap({ URLRequest(url: $0) }) else {
             fatalError()
