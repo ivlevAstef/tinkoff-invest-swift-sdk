@@ -66,7 +66,9 @@ public class TIRest {
         }
         if !query.isEmpty {
             func escape(_ str: String) -> String {
-                str.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics) ?? str
+                var characterSet = CharacterSet.alphanumerics
+                characterSet.insert(charactersIn: "-._~")
+                return str.addingPercentEncoding(withAllowedCharacters: characterSet) ?? str
             }
 
             urlComponents.queryItems = query.map {
