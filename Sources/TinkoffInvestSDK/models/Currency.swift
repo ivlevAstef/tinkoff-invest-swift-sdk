@@ -9,7 +9,7 @@ import Foundation
 
 public enum Currency: String, Codable {
     case rub = "RUB"
-    case usb = "USB"
+    case usd = "USD"
     case eur = "EUR"
     case gbr = "GBP"
     case hkd = "HKD"
