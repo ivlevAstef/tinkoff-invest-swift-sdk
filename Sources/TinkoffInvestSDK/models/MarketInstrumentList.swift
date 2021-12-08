@@ -10,7 +10,7 @@ import Foundation
 public struct MarketInstrumentList: Codable {
     public struct MarketInstrument: Codable {
         public let figi: FIGI
-        public let ticket: String
+        public let ticker: String
         public let lot: Int
         public let name: String
         public let type: InstrumentType
