@@ -73,13 +73,16 @@ public class TIRest {
 
         urlRequest.httpMethod = method
         urlRequest.httpBody = body
-        urlRequest.setValue( "Bearer \(token)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
+        print("REST: send \(method) request \(url.absoluteString)")
         return urlSession.dataTaskPublisher(for: urlRequest)
             .tryMap() { element -> Data in
                 guard let httpResponse = element.response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    print("REST: fail receive data from \(url.absoluteString)")
                     throw URLError(.badServerResponse)
                 }
+                print("REST: receive data from \(url.absoluteString)")
                 return element.data
             }.eraseToAnyPublisher()
     }
