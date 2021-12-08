@@ -66,8 +66,8 @@ public class TIRest {
         }
         if !query.isEmpty {
             func escape(_ str: String) -> String {
-                var characterSet = CharacterSet.urlPathAllowed
-                characterSet.insert(charactersIn: "-._~")
+                var characterSet = NSCharacterSet.urlQueryAllowed
+                characterSet.remove(charactersIn: ";/?:@&=+$, ")
                 return str.addingPercentEncoding(withAllowedCharacters: characterSet) ?? str
             }
 
